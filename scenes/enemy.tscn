@@ -1,0 +1,50 @@
+[gd_scene load_steps=8 format=3 uid="uid://dl23dot24t43f"]
+
+[ext_resource type="Script" uid="uid://c88ypyumq5nsv" path="res://scripts/enemy.gd" id="1_7p1mj"]
+[ext_resource type="Script" uid="uid://cra7q8466ltu0" path="res://scripts/head.gd" id="2_c4w8v"]
+[ext_resource type="Texture2D" uid="uid://dpjq5utyuyd0q" path="res://assets/characters/manangal/mananangal_body.png" id="2_md0e3"]
+[ext_resource type="Texture2D" uid="uid://cokjn7d183ee6" path="res://assets/characters/manangal/mananangal_head.png" id="3_4ra3w"]
+[ext_resource type="Script" uid="uid://bjuj2kj5v23vr" path="res://scripts/body.gd" id="3_5uy6h"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_c4w8v"]
+radius = 17.8516
+height = 35.7032
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_md0e3"]
+radius = 5.99993
+height = 16.4402
+
+[node name="Enemy" type="Node2D"]
+scale = Vector2(0.5, 0.5)
+script = ExtResource("1_7p1mj")
+
+[node name="Head" type="CharacterBody2D" parent="."]
+position = Vector2(0, -2)
+script = ExtResource("2_c4w8v")
+
+[node name="BodySprite" type="Sprite2D" parent="Head"]
+position = Vector2(0, -4)
+texture = ExtResource("3_4ra3w")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Head"]
+position = Vector2(2.38419e-07, -16)
+rotation = 7.96642
+shape = SubResource("CapsuleShape2D_c4w8v")
+disabled = true
+
+[node name="Body" type="CharacterBody2D" parent="."]
+position = Vector2(0, -6)
+script = ExtResource("3_5uy6h")
+
+[node name="BodySprite" type="Sprite2D" parent="Body"]
+position = Vector2(0, -8)
+texture = ExtResource("2_md0e3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
+position = Vector2(0, 26)
+rotation = -1.54155
+shape = SubResource("CapsuleShape2D_md0e3")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]

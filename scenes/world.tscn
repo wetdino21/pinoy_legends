@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://x4og64vd5fti"]
+[gd_scene load_steps=15 format=4 uid="uid://x4og64vd5fti"]
 
 [ext_resource type="Script" uid="uid://dlnw04s8tq1gy" path="res://scenes/world.gd" id="1_i7141"]
 [ext_resource type="Texture2D" uid="uid://dlhar04fx5q8m" path="res://assets/tilesets/spritesheet.png" id="1_nnsk1"]
@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://dl23dot24t43f" path="res://scenes/enemy.tscn" id="6_qfnet"]
 [ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="8_4mrxx"]
 [ext_resource type="AudioStream" uid="uid://6qhd3sthlb04" path="res://assets/Audio/bg_music.mp3" id="8_7r4gi"]
+[ext_resource type="Texture2D" uid="uid://bqyqnwweqece0" path="res://assets/buttons/jump_button.png" id="8_w7kh3"]
+[ext_resource type="Texture2D" uid="uid://cuo6dwvuouscc" path="res://assets/buttons/dash_button.png" id="9_w7kh3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rwgxs"]
 texture = ExtResource("1_nnsk1")
@@ -178,42 +180,36 @@ position = Vector2(415, 378)
 
 [node name="MobileUI" type="CanvasLayer" parent="."]
 
-[node name="JumpButton" type="Button" parent="MobileUI"]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -182.0
-offset_top = -92.0
-offset_right = -54.0
-offset_bottom = -35.0
-grow_horizontal = 0
-grow_vertical = 0
-text = "Jump"
-
-[node name="DashButton" type="Button" parent="MobileUI"]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -318.0
-offset_top = -90.0
-offset_right = -220.0
-offset_bottom = -38.0
-grow_horizontal = 0
-grow_vertical = 0
-text = "Dash"
-
 [node name="VirtualJoystick" parent="MobileUI" instance=ExtResource("8_4mrxx")]
 joystick_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MobileUI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -444.0
+offset_top = -272.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="JumpBtn" type="TouchScreenButton" parent="MobileUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.639216)
+position = Vector2(152, 51)
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("8_w7kh3")
+action = "jump"
+
+[node name="DashBtn" type="TouchScreenButton" parent="MobileUI/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.639216)
+position = Vector2(1, 149)
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("9_w7kh3")
+action = "dash"
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("8_7r4gi")
 volume_db = 10.0
 autoplay = true
 parameters/looping = true
-
-[connection signal="pressed" from="MobileUI/JumpButton" to="player" method="_on_jump_button_pressed"]
-[connection signal="pressed" from="MobileUI/DashButton" to="player" method="_on_dash_button_pressed"]

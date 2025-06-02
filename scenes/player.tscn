@@ -1,10 +1,8 @@
 [gd_scene load_steps=16 format=3 uid="uid://sjsihxron4pj"]
 
 [ext_resource type="Script" uid="uid://th2kqjsgb2cf" path="res://scripts/player.gd" id="1_g2els"]
+[ext_resource type="Texture2D" uid="uid://crw6b1dneb3kh" path="res://assets/characters/Dash_Shadow.png" id="2_dqkch"]
 [ext_resource type="PackedScene" uid="uid://dq8cgh15aw21q" path="res://scenes/character_sprite.tscn" id="2_qhqgy"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_g2els"]
-load_path = "res://.godot/imported/Shadow.png-489664f8e7eddbf8f0eb1c24590ab3b4.ctex"
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g2els"]
 radius = 5.0
@@ -58,17 +56,20 @@ transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition
 [node name="player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_g2els")
 
-[node name="Shadow" type="Sprite2D" parent="."]
-texture = SubResource("CompressedTexture2D_g2els")
-
-[node name="AnimatedSprite2D" parent="." instance=ExtResource("2_qhqgy")]
-animation = &"dash_down"
-frame_progress = 0.751277
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 7)
 shape = SubResource("CapsuleShape2D_g2els")
 debug_color = Color(0, 0.561418, 0.882855, 1)
+
+[node name="Shadow" type="Sprite2D" parent="."]
+position = Vector2(0, -1)
+texture = ExtResource("2_dqkch")
+region_enabled = true
+region_rect = Rect2(0, 0, 50, 64)
+
+[node name="AnimatedSprite2D" parent="." instance=ExtResource("2_qhqgy")]
+animation = &"dash_down"
+frame_progress = 0.751277
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(5, 5)

@@ -136,12 +136,12 @@ func get_animation_name(dir: Vector2) -> String:
     return "idle_" + ("up" if last_facing_up else "down")
     
 
-func _on_jump_button_pressed():
-    print("JUmpp click btn")
-    if !is_jumping:
-        _start_jump()
-
-func _on_dash_button_pressed():
-    print("Dashhh click btn")
-    if !is_dashing and direction != Vector2.ZERO:
-        _start_dash()
+#func _on_jump_button_pressed():
+    #print("JUmpp click btn")
+    #if !is_jumping:
+        #_start_jump()
+#
+#func _on_dash_button_pressed():
+    #print("Dashhh click btn")
+    #if !is_dashing and direction != Vector2.ZERO:
+        #_start_dash()

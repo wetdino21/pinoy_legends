@@ -10,7 +10,7 @@ shader_parameter/silhouette_color = Color(0, 0, 0, 0.5)
 
 [node name="CharacterSprite" type="AnimatedSprite2D"]
 sprite_frames = ExtResource("2_kciyk")
-animation = &"idle_down"
+animation = &"walk_up"
 script = ExtResource("1_k8qwi")
 
 [node name="SilhouetteSprite" type="AnimatedSprite2D" parent="."]

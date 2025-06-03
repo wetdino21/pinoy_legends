@@ -47,10 +47,11 @@ func _physics_process(delta):
             
     # dashing logic
     if is_dashing:
-        print("dashingg")
+        #print("dashingg")
         dash_timer -= delta
         if dash_timer <= 0.0:
             is_dashing = false
+            set_glow_enabled(false)
         velocity = dash_direction * dash_speed
     else:
         # Input only works when not dashing
@@ -74,6 +75,7 @@ func _physics_process(delta):
 
         if Input.is_action_just_pressed("dash") and direction != Vector2.ZERO:
             _start_dash()
+            $Camera2D.start_shake(1.0, 0.15)
             # is_dashing = true
             # dash_timer = dash_duration
             # dash_direction = direction
@@ -94,6 +96,7 @@ func _start_jump():
 
 func _start_dash():
     is_dashing = true
+    set_glow_enabled(true)
     dash_timer = dash_duration
     dash_direction = direction
 
@@ -135,7 +138,11 @@ func get_animation_name(dir: Vector2) -> String:
     
     return "idle_" + ("up" if last_facing_up else "down")
     
-
+func set_glow_enabled(enabled: bool):
+    var mat = characterSprite.material
+    if mat and mat is ShaderMaterial:
+        mat.set_shader_parameter("enable_glow", enabled)
+        
 #func _on_jump_button_pressed():
     #print("JUmpp click btn")
     #if !is_jumping:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dl23dot24t43f"]
+[gd_scene load_steps=9 format=3 uid="uid://dl23dot24t43f"]
 
 [ext_resource type="Script" uid="uid://c88ypyumq5nsv" path="res://scripts/enemy.gd" id="1_7p1mj"]
 [ext_resource type="Script" uid="uid://cra7q8466ltu0" path="res://scripts/head.gd" id="2_c4w8v"]
@@ -13,6 +13,8 @@ height = 35.7032
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_md0e3"]
 radius = 5.99993
 height = 16.4402
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xwavj"]
 
 [node name="Enemy" type="Node2D"]
 scale = Vector2(0.5, 0.5)
@@ -48,3 +50,20 @@ shape = SubResource("CapsuleShape2D_md0e3")
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CapsuleShape2D_xwavj")
+
+[node name="BloodParticles" type="CPUParticles2D" parent="."]
+z_index = -1
+position = Vector2(0, 18)
+amount = 20
+use_fixed_seed = true
+seed = 956029360
+lifetime_randomness = 0.4
+draw_order = 1
+emission_shape = 1
+emission_sphere_radius = 15.66
+particle_flag_align_y = true
+spread = 30.0
+gravity = Vector2(0, 100)
+scale_amount_max = 3.0
+color = Color(0.590831, 0.0905171, 0.0525837, 1)

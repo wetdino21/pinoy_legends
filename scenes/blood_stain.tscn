@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://bu68xjb1qw6cj"]
+
+[ext_resource type="Script" uid="uid://ceykbr15i3isk" path="res://scenes/blood_stain.gd" id="1_cu4hb"]
+[ext_resource type="Texture2D" uid="uid://dc1at7yelng4n" path="res://assets/texture/blood_texture.png" id="2_71q4f"]
+
+[node name="BloodStain" type="Node2D"]
+script = ExtResource("1_cu4hb")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.135, 0.135)
+texture = ExtResource("2_71q4f")
+region_rect = Rect2(272, 208, 16, 16)
+region_filter_clip_enabled = true

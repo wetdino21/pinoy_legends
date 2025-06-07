@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://md2m1thhgj8f"
+path="res://.godot/imported/Cosmic Pulse.MP3-00bd0e31a18044175d4160b6bba396fe.mp3str"
+
+[deps]
+
+source_file="res://assets/Audio/Cosmic Pulse.MP3"
+dest_files=["res://.godot/imported/Cosmic Pulse.MP3-00bd0e31a18044175d4160b6bba396fe.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

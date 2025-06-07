@@ -1,6 +1,7 @@
 shader_type canvas_item;
+render_mode blend_mix, unshaded;
 
-uniform bool enable_glow = false;
+uniform bool enable_glow = true;
 uniform vec4 glow_color : source_color = vec4(1.0, 1.0, 0.0, 1.0); // Yellow
 uniform float glow_thickness = 2.0;
 uniform float glow_softness = 1.5; // Controls fade smoothness
@@ -35,4 +36,7 @@ void fragment() {
             discard;
         }
     }
+}
+
+void light() {
 }

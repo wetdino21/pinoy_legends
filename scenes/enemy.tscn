@@ -1,63 +1,56 @@
-[gd_scene load_steps=9 format=3 uid="uid://dl23dot24t43f"]
+[gd_scene load_steps=16 format=3 uid="uid://dl23dot24t43f"]
 
 [ext_resource type="Script" uid="uid://c88ypyumq5nsv" path="res://scripts/enemy.gd" id="1_7p1mj"]
 [ext_resource type="Script" uid="uid://cra7q8466ltu0" path="res://scripts/head.gd" id="2_c4w8v"]
 [ext_resource type="Texture2D" uid="uid://dpjq5utyuyd0q" path="res://assets/characters/manangal/mananangal_body.png" id="2_md0e3"]
 [ext_resource type="Texture2D" uid="uid://cokjn7d183ee6" path="res://assets/characters/manangal/mananangal_head.png" id="3_4ra3w"]
 [ext_resource type="Script" uid="uid://bjuj2kj5v23vr" path="res://scripts/body.gd" id="3_5uy6h"]
+[ext_resource type="Shader" uid="uid://bsnmgo8uhx6b1" path="res://assets/shaders/glow_default.gdshader" id="5_8qclf"]
+[ext_resource type="Script" uid="uid://dlg47332t71pr" path="res://scripts/states/state_machine.gd" id="6_xwavj"]
+[ext_resource type="Script" uid="uid://coovrrlbcc4h7" path="res://scripts/states/enemy_idle.gd" id="7_nenq2"]
+[ext_resource type="Texture2D" uid="uid://ban6bjauvjtnw" path="res://assets/texture/light_3.png" id="9_8qclf"]
+[ext_resource type="Script" uid="uid://ci0wb0heycmc7" path="res://scripts/states/enemy_head_chase.gd" id="9_ipns3"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nenq2"]
+radius = 8.0
+height = 16.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_c4w8v"]
 radius = 17.8516
 height = 35.7032
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8qclf"]
+shader = ExtResource("5_8qclf")
+shader_parameter/enable_glow = true
+shader_parameter/glow_color = Color(0.592157, 0.0313726, 0, 1)
+shader_parameter/glow_thickness = 2.0
+shader_parameter/glow_softness = 1.5
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_md0e3"]
-radius = 5.99993
+radius = 3.99829
 height = 16.4402
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xwavj"]
 
-[node name="Enemy" type="Node2D"]
-scale = Vector2(0.5, 0.5)
+[node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
+scale = Vector2(0.4, 0.4)
+slide_on_ceiling = false
 script = ExtResource("1_7p1mj")
+
+[node name="Enemy_Collision" type="CollisionShape2D" parent="."]
+position = Vector2(0, 14)
+shape = SubResource("CapsuleShape2D_nenq2")
 
 [node name="Head" type="CharacterBody2D" parent="."]
 position = Vector2(0, -2)
 script = ExtResource("2_c4w8v")
 
-[node name="BodySprite" type="Sprite2D" parent="Head"]
-position = Vector2(0, -4)
-texture = ExtResource("3_4ra3w")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Head"]
-position = Vector2(2.38419e-07, -16)
-rotation = 7.96642
-shape = SubResource("CapsuleShape2D_c4w8v")
-disabled = true
-
-[node name="Body" type="CharacterBody2D" parent="."]
-position = Vector2(0, -6)
-script = ExtResource("3_5uy6h")
-
-[node name="BodySprite" type="Sprite2D" parent="Body"]
-position = Vector2(0, -8)
-texture = ExtResource("2_md0e3")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
-position = Vector2(0, 26)
-rotation = -1.54155
-shape = SubResource("CapsuleShape2D_md0e3")
-
-[node name="Area2D" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("CapsuleShape2D_xwavj")
-
-[node name="BloodParticles" type="CPUParticles2D" parent="."]
+[node name="BloodParticles" type="CPUParticles2D" parent="Head"]
 z_index = -1
-position = Vector2(0, 18)
-amount = 20
+position = Vector2(0, 20)
+amount = 50
 use_fixed_seed = true
-seed = 956029360
+seed = 3474582570
 lifetime_randomness = 0.4
 draw_order = 1
 emission_shape = 1
@@ -67,3 +60,70 @@ spread = 30.0
 gravity = Vector2(0, 100)
 scale_amount_max = 3.0
 color = Color(0.590831, 0.0905171, 0.0525837, 1)
+
+[node name="BodySprite" type="Sprite2D" parent="Head"]
+position = Vector2(0, -4)
+texture = ExtResource("3_4ra3w")
+
+[node name="Area2D" type="Area2D" parent="Head"]
+
+[node name="head_collision" type="CollisionShape2D" parent="Head/Area2D"]
+position = Vector2(2.38419e-07, -16)
+rotation = 1.68323
+shape = SubResource("CapsuleShape2D_c4w8v")
+disabled = true
+
+[node name="light_eye_left" type="PointLight2D" parent="Head"]
+position = Vector2(-9, -12)
+scale = Vector2(1, 1)
+color = Color(0.658167, 0, 0.0339305, 1)
+energy = 16.0
+blend_mode = 2
+texture = ExtResource("9_8qclf")
+texture_scale = 0.05
+
+[node name="light_eye_right" type="PointLight2D" parent="Head"]
+position = Vector2(8.5, -12)
+scale = Vector2(1, 1)
+color = Color(0.658167, 0, 0.0339305, 1)
+energy = 16.0
+blend_mode = 2
+texture = ExtResource("9_8qclf")
+texture_scale = 0.05
+
+[node name="Body" type="CharacterBody2D" parent="."]
+position = Vector2(0, -6)
+script = ExtResource("3_5uy6h")
+
+[node name="BodySprite" type="Sprite2D" parent="Body"]
+material = SubResource("ShaderMaterial_8qclf")
+position = Vector2(0, -8)
+texture = ExtResource("2_md0e3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
+position = Vector2(0, 22)
+rotation = -1.54155
+shape = SubResource("CapsuleShape2D_md0e3")
+disabled = true
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CapsuleShape2D_xwavj")
+disabled = true
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("6_xwavj")
+initial_state = NodePath("idle")
+
+[node name="idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("enemy", "enemycollision")]
+script = ExtResource("7_nenq2")
+enemy = NodePath("../..")
+enemycollision = NodePath("../../Enemy_Collision")
+metadata/_custom_type_script = "uid://coovrrlbcc4h7"
+
+[node name="head_chase" type="Node" parent="StateMachine" node_paths=PackedStringArray("enemy_body", "enemy_head")]
+script = ExtResource("9_ipns3")
+enemy_body = NodePath("../../Body")
+enemy_head = NodePath("../../Head")
+metadata/_custom_type_script = "uid://ci0wb0heycmc7"

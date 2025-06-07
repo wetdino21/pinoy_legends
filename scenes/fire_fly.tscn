@@ -1,0 +1,29 @@
+[gd_scene load_steps=7 format=3 uid="uid://bnamp3i6q3s1"]
+
+[ext_resource type="Script" uid="uid://bpcjhxerw5ssx" path="res://scenes/fire_fliy.gd" id="1_wn54r"]
+[ext_resource type="Shader" uid="uid://dsr5d4kil2waw" path="res://assets/shaders/unshade.gdshader" id="2_1kn8b"]
+[ext_resource type="Texture2D" uid="uid://dtrt8oig6pwy3" path="res://assets/texture/light_small.png" id="2_4kxua"]
+[ext_resource type="Texture2D" uid="uid://cmerdu6345pqa" path="res://assets/texture/light_very_small.png" id="3_4kxua"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1kn8b"]
+shader = ExtResource("2_1kn8b")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vdjc0"]
+shader = ExtResource("2_1kn8b")
+
+[node name="FireFly" type="Node2D"]
+z_index = 1000
+script = ExtResource("1_wn54r")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 0, 1)
+material = SubResource("ShaderMaterial_1kn8b")
+scale = Vector2(3, 3)
+texture = ExtResource("3_4kxua")
+region_rect = Rect2(85, 41, 13, 9)
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+material = SubResource("ShaderMaterial_vdjc0")
+scale = Vector2(1.2, 1.2)
+color = Color(1, 1, 0, 1)
+texture = ExtResource("2_4kxua")

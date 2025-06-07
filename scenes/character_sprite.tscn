@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dq8cgh15aw21q"]
 
-[ext_resource type="Script" uid="uid://c8mvu2pyqiw72" path="res://scenes/character_sprite.gd" id="1_k8qwi"]
+[ext_resource type="Script" uid="uid://c8mvu2pyqiw72" path="res://scripts/silhouette.gd" id="1_k8qwi"]
 [ext_resource type="SpriteFrames" uid="uid://cvga4c3hi3dit" path="res://animations/animation-player.tres" id="2_kciyk"]
 [ext_resource type="Shader" uid="uid://bq8m8073u54tq" path="res://assets/shaders/silhouette.gdshader" id="2_sjefb"]
 

@@ -65,3 +65,9 @@ pointing/emulate_touch_from_mouse=true
 
 textures/canvas_textures/default_texture_filter=0
 textures/vram_compression/import_etc2_astc=true
+viewport/stretch/aspect="expand"
+viewport/stretch/mode="viewport"
+viewport/size/window_height_override=0
+viewport/size/window_width_override=0
+viewport/size/viewport_height=648
+viewport/size/viewport_width=1152

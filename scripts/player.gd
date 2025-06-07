@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
 @export var speed := 100.0
-@export var dash_speed := 200.0
-@export var dash_duration := 0.4
+@export var dash_speed := 500.0
+@export var dash_duration := 0.15
 @export var jump_strength := 100.0
 @export var gravity := 300.0
 
@@ -13,6 +13,8 @@ var z_velocity := 0.0
 var z_position := 0.0
 var is_jumping := false
 var is_dashing := false
+var afterimage_timer = 0.0
+var afterimage_interval = 0.05
 var dash_timer := 0.0
 var dash_direction := Vector2.ZERO
 var can_jump := true
@@ -21,6 +23,34 @@ var can_dash := true
 @onready var characterSprite = $AnimatedSprite2D
 @onready var collision_shape = $CollisionShape2D
 @onready var joystick = get_node("/root/world/MobileUI/VirtualJoystick")
+@onready var dash_trail = $DashTrail
+@onready var scepter = get_node("/root/world/Player/Scepter") 
+
+func _process(delta):
+    # Smooth follow target offset to the right of player
+    if direction != Vector2.ZERO:
+        var offset = direction.normalized() * 16  # distance to maintain
+        var scepter_target = global_position - offset + Vector2(0, -z_position)
+        scepter.global_position = scepter.global_position.lerp(scepter_target, delta * 10.0)
+    #else:
+        ## When idle, keep last mirrored direction
+        #var idle_offset = dash_direction if is_dashing else Vector2.RIGHT
+        #var scepter_target = global_position - idle_offset.normalized() * 16 + Vector2(0, -z_position)
+        #scepter.global_position = scepter.global_position.lerp(scepter_target, delta * 10.0)
+    
+    #scepter.rotation = sin(Time.get_ticks_msec() / 200.0) * 0.1
+
+
+
+
+    if is_dashing:
+        afterimage_timer += delta
+        if afterimage_timer >= afterimage_interval:
+            _spawn_afterimage()
+            afterimage_timer = 0.0
+    else:
+        afterimage_timer = afterimage_interval
+        dash_trail.emitting = false
 
 func _physics_process(delta):
     move_and_slide()
@@ -35,19 +65,17 @@ func _physics_process(delta):
             
     if is_jumping:
         $Shadow.global_scale = Vector2(0.8, 0.8)
-        $CollisionShape2D.disabled = true
         z_velocity -= gravity * delta
         z_position += z_velocity * delta
 
         if z_position <= 0.0:
-            $CollisionShape2D.disabled = false
+            #$CollisionShape2D.disabled = false
             z_position = 0.0
             is_jumping = false
             z_velocity = 0.0
             
     # dashing logic
     if is_dashing:
-        #print("dashingg")
         dash_timer -= delta
         if dash_timer <= 0.0:
             is_dashing = false
@@ -93,12 +121,27 @@ func _physics_process(delta):
 func _start_jump():
     is_jumping = true
     z_velocity = jump_strength
+    #$CollisionShape2D.disabled = true
 
 func _start_dash():
     is_dashing = true
     set_glow_enabled(true)
     dash_timer = dash_duration
     dash_direction = direction
+    dash_trail.emitting = true
+    
+    # Emit particles in the opposite direction of dash
+    if dash_direction != Vector2.ZERO:
+        dash_trail.direction = -dash_direction.normalized()
+        dash_trail.global_position = global_position + Vector2(0, -z_position)
+        
+func _spawn_afterimage():
+    var afterimage = preload("res://scenes/afterimage.tscn").instantiate()
+    var sprite = $AnimatedSprite2D
+    afterimage.texture = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
+    afterimage.position = global_position + Vector2(0, -z_position)
+    afterimage.scale = sprite.scale
+    get_parent().add_child(afterimage)
 
 func play_animation(dir: Vector2):
     var anim = get_animation_name(dir)
@@ -121,9 +164,9 @@ func get_animation_name(dir: Vector2) -> String:
             return "dash_right" 
         
     
-    if dir.y > 0 and abs(dir.x) < 0.1:
+    if dir.y > 0 and abs(dir.x) < 0.5:
         return "walk_down"
-    elif dir.y < 0 and abs(dir.x) < 0.1:
+    elif dir.y < 0 and abs(dir.x) < 0.5:
         return "walk_up"
     
     if dir.x < 0 and dir.y != 0:

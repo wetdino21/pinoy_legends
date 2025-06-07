@@ -1,22 +1,33 @@
-[gd_scene load_steps=19 format=3 uid="uid://sjsihxron4pj"]
+[gd_scene load_steps=25 format=3 uid="uid://sjsihxron4pj"]
 
 [ext_resource type="Script" uid="uid://th2kqjsgb2cf" path="res://scripts/player.gd" id="1_g2els"]
 [ext_resource type="Texture2D" uid="uid://crw6b1dneb3kh" path="res://assets/characters/Dash_Shadow.png" id="2_dqkch"]
+[ext_resource type="Texture2D" uid="uid://ban6bjauvjtnw" path="res://assets/texture/light_3.png" id="2_fjrip"]
 [ext_resource type="PackedScene" uid="uid://dq8cgh15aw21q" path="res://scenes/character_sprite.tscn" id="2_qhqgy"]
-[ext_resource type="Shader" uid="uid://bdulcylfbyupd" path="res://assets/shaders/glow_edge.gdshader" id="4_dqkch"]
+[ext_resource type="Texture2D" uid="uid://bopd2lalcextx" path="res://assets/texture/circle2.png" id="3_smehm"]
+[ext_resource type="Shader" uid="uid://bsnmgo8uhx6b1" path="res://assets/shaders/glow_default.gdshader" id="4_tuyoq"]
 [ext_resource type="Script" uid="uid://b8ht4b7k3atvm" path="res://scenes/camera_2d.gd" id="5_qlg0r"]
+[ext_resource type="Script" uid="uid://cv8ysjq67n0cm" path="res://scripts/dash_trail.gd" id="7_fjrip"]
+[ext_resource type="Texture2D" uid="uid://dphh6xdrda8n5" path="res://assets/items/items.png" id="9_ur7pv"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g2els"]
 radius = 5.0
 height = 10.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_qhqgy"]
-shader = ExtResource("4_dqkch")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tuyoq"]
+shader = ExtResource("4_tuyoq")
 shader_parameter/enable_glow = false
 shader_parameter/glow_color = Color(1, 1, 0, 1)
 shader_parameter/glow_thickness = 2.0
 shader_parameter/glow_softness = 1.5
-shader_parameter/pulse_speed = 8.0
+
+[sub_resource type="Animation" id="Animation_ur7pv"]
+resource_name = "weapon_animation"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_y4r1p"]
+_data = {
+&"weapon_animation": SubResource("Animation_ur7pv")
+}
 
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_g2els"]
 
@@ -66,28 +77,65 @@ transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition
 [node name="player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_g2els")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="ShadowLight" type="PointLight2D" parent="."]
+visible = false
+z_index = 100
+z_as_relative = false
+energy = 0.5
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 3.0
+shadow_item_cull_mask = 3
+texture = ExtResource("2_fjrip")
+texture_scale = 0.6
+
+[node name="Light" type="PointLight2D" parent="."]
+visible = false
+z_index = 100
+z_as_relative = false
+shadow_filter = 1
+shadow_filter_smooth = 3.0
+shadow_item_cull_mask = 3
+texture = ExtResource("2_fjrip")
+texture_scale = 0.5
+
+[node name="Light2" type="PointLight2D" parent="."]
+visible = false
+z_index = 100
+z_as_relative = false
+energy = 0.03
+shadow_filter = 1
+shadow_filter_smooth = 3.0
+shadow_item_cull_mask = 3
+texture = ExtResource("3_smehm")
+texture_scale = 2.5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["player"]]
 position = Vector2(0, 7)
 shape = SubResource("CapsuleShape2D_g2els")
 
 [node name="Shadow" type="Sprite2D" parent="."]
-position = Vector2(0, -1)
+position = Vector2(0.5, 0)
 texture = ExtResource("2_dqkch")
 region_enabled = true
 region_rect = Rect2(0, 0, 50, 64)
 
 [node name="AnimatedSprite2D" parent="." instance=ExtResource("2_qhqgy")]
-material = SubResource("ShaderMaterial_qhqgy")
+material = SubResource("ShaderMaterial_tuyoq")
 animation = &"dash_down"
-frame_progress = 0.751277
+frame = 7
+frame_progress = 1.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(5, 5)
+zoom = Vector2(3, 3)
 position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 script = ExtResource("5_qlg0r")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_y4r1p")
+}
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 tree_root = SubResource("AnimationNodeStateMachine_g2els")
@@ -98,3 +146,66 @@ parameters/conditions/walk = false
 parameters/Dash/blend_position = Vector2(0, 0)
 parameters/Idle/blend_position = Vector2(0, 0)
 parameters/Walk/blend_position = Vector2(0, 0)
+
+[node name="DashTrail" type="CPUParticles2D" parent="."]
+modulate = Color(1, 0.807843, 0, 1)
+self_modulate = Color(1, 1, 0, 1)
+show_behind_parent = true
+clip_children = 2
+lifetime = 0.1
+randomness = 0.1
+lifetime_randomness = 1.0
+initial_velocity_min = 200.0
+initial_velocity_max = 400.0
+scale_amount_min = 0.1
+scale_amount_max = 0.2
+script = ExtResource("7_fjrip")
+
+[node name="Scepter" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(0.0117647, 1, 1, 1)
+y_sort_enabled = true
+position = Vector2(10, 2)
+rotation = 0.785398
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("9_ur7pv")
+region_enabled = true
+region_rect = Rect2(164, 324, 25, 26)
+
+[node name="scepter_light" type="PointLight2D" parent="Scepter"]
+z_index = -1
+position = Vector2(-10.789, -11.314)
+color = Color(0.10772, 0.834167, 0.802069, 1)
+energy = 3.0
+shadow_enabled = true
+texture = ExtResource("2_fjrip")
+texture_scale = 0.2
+
+[node name="ShadowLight" type="PointLight2D" parent="Scepter"]
+z_index = 100
+z_as_relative = false
+energy = 0.5
+shadow_enabled = true
+shadow_filter = 1
+shadow_filter_smooth = 3.0
+shadow_item_cull_mask = 3
+texture = ExtResource("2_fjrip")
+
+[node name="AreaLight" type="PointLight2D" parent="Scepter"]
+z_index = 100
+z_as_relative = false
+shadow_filter = 1
+shadow_filter_smooth = 3.0
+shadow_item_cull_mask = 3
+texture = ExtResource("2_fjrip")
+texture_scale = 1.3
+
+[node name="PixelatedLight" type="PointLight2D" parent="Scepter"]
+z_index = 100
+z_as_relative = false
+energy = 0.03
+shadow_filter = 1
+shadow_filter_smooth = 3.0
+shadow_item_cull_mask = 3
+texture = ExtResource("3_smehm")
+texture_scale = 8.0

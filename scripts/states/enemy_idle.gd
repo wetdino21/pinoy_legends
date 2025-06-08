@@ -11,7 +11,7 @@ var wander_time : float
 
 func wander_randomize():
     move_direction = Vector2(randf_range(-1,1), randf_range(-1,1)).normalized()
-    wander_time = randf_range(1,3)
+    wander_time = randf_range(3,7)
     
 func enter():
     enemycollision.disabled = false

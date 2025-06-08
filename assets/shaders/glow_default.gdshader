@@ -5,10 +5,18 @@ uniform bool enable_glow = true;
 uniform vec4 glow_color : source_color = vec4(1.0, 1.0, 0.0, 1.0); // Yellow
 uniform float glow_thickness = 2.0;
 uniform float glow_softness = 1.5; // Controls fade smoothness
+uniform bool flash_white = false;
 
 void fragment() {
     vec4 base = texture(TEXTURE, UV);
-
+    
+    //flash white when hit
+    if (flash_white && base.a > 0.01) {
+        COLOR = vec4(1.0, 1.0, 1.0, base.a); // solid white flash
+        //return;
+    }
+    
+    else 
     if (base.a > 0.01) {
         COLOR = base;
     } else {

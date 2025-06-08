@@ -2,8 +2,17 @@
 extends CharacterBody2D    
 class_name Enemy
 
+var health := 100
+
 func _physics_process(delta):
     move_and_slide()
+    
+func apply_damage(amount):
+    health -= amount
+    print("Enemy HP:", health)
+    if health <= 0:
+        queue_free()
+        
 #
 #
 #extends Node2D

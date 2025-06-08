@@ -45,6 +45,6 @@ func _process(delta):
             var firefly = firefly_scene.instantiate()
             firefly.position = world_pos
             add_child(firefly)
-            print("firelyy")
+            #print("firelyy")
 
     

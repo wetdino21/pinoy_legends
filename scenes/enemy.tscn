@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dl23dot24t43f"]
+[gd_scene load_steps=17 format=3 uid="uid://dl23dot24t43f"]
 
 [ext_resource type="Script" uid="uid://c88ypyumq5nsv" path="res://scripts/enemy.gd" id="1_7p1mj"]
 [ext_resource type="Script" uid="uid://cra7q8466ltu0" path="res://scripts/head.gd" id="2_c4w8v"]
@@ -8,16 +8,14 @@
 [ext_resource type="Shader" uid="uid://bsnmgo8uhx6b1" path="res://assets/shaders/glow_default.gdshader" id="5_8qclf"]
 [ext_resource type="Script" uid="uid://dlg47332t71pr" path="res://scripts/states/state_machine.gd" id="6_xwavj"]
 [ext_resource type="Script" uid="uid://coovrrlbcc4h7" path="res://scripts/states/enemy_idle.gd" id="7_nenq2"]
+[ext_resource type="Script" uid="uid://ci1mf3o8ndigq" path="res://scenes/enemy_hitbox.gd" id="8_w8i8w"]
 [ext_resource type="Texture2D" uid="uid://ban6bjauvjtnw" path="res://assets/texture/light_3.png" id="9_8qclf"]
 [ext_resource type="Script" uid="uid://ci0wb0heycmc7" path="res://scripts/states/enemy_head_chase.gd" id="9_ipns3"]
+[ext_resource type="Script" uid="uid://uryfxk8h3fqm" path="res://scenes/enemy_hurtbox.gd" id="9_otmr2"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nenq2"]
 radius = 8.0
 height = 16.0
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_c4w8v"]
-radius = 17.8516
-height = 35.7032
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8qclf"]
 shader = ExtResource("5_8qclf")
@@ -25,12 +23,15 @@ shader_parameter/enable_glow = true
 shader_parameter/glow_color = Color(0.592157, 0.0313726, 0, 1)
 shader_parameter/glow_thickness = 2.0
 shader_parameter/glow_softness = 1.5
+shader_parameter/flash_white = false
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_md0e3"]
-radius = 3.99829
-height = 16.4402
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_c4w8v"]
+radius = 17.8516
+height = 35.7032
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xwavj"]
+radius = 35.0
+height = 70.0
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
 scale = Vector2(0.4, 0.4)
@@ -48,6 +49,7 @@ script = ExtResource("2_c4w8v")
 [node name="BloodParticles" type="CPUParticles2D" parent="Head"]
 z_index = -1
 position = Vector2(0, 20)
+emitting = false
 amount = 50
 use_fixed_seed = true
 seed = 3474582570
@@ -65,17 +67,8 @@ color = Color(0.590831, 0.0905171, 0.0525837, 1)
 position = Vector2(0, -4)
 texture = ExtResource("3_4ra3w")
 
-[node name="Area2D" type="Area2D" parent="Head"]
-
-[node name="head_collision" type="CollisionShape2D" parent="Head/Area2D"]
-position = Vector2(2.38419e-07, -16)
-rotation = 1.68323
-shape = SubResource("CapsuleShape2D_c4w8v")
-disabled = true
-
 [node name="light_eye_left" type="PointLight2D" parent="Head"]
 position = Vector2(-9, -12)
-scale = Vector2(1, 1)
 color = Color(0.658167, 0, 0.0339305, 1)
 energy = 16.0
 blend_mode = 2
@@ -84,12 +77,13 @@ texture_scale = 0.05
 
 [node name="light_eye_right" type="PointLight2D" parent="Head"]
 position = Vector2(8.5, -12)
-scale = Vector2(1, 1)
 color = Color(0.658167, 0, 0.0339305, 1)
 energy = 16.0
 blend_mode = 2
 texture = ExtResource("9_8qclf")
 texture_scale = 0.05
+
+[node name="Area2D2" type="Area2D" parent="Head"]
 
 [node name="Body" type="CharacterBody2D" parent="."]
 position = Vector2(0, -6)
@@ -100,17 +94,28 @@ material = SubResource("ShaderMaterial_8qclf")
 position = Vector2(0, -8)
 texture = ExtResource("2_md0e3")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
-position = Vector2(0, 22)
-rotation = -1.54155
-shape = SubResource("CapsuleShape2D_md0e3")
-disabled = true
+[node name="Hitbox" type="Area2D" parent="." groups=["enemy_hitbox"]]
+position = Vector2(0, -2)
+scale = Vector2(1, 1)
+collision_layer = 9
+collision_mask = 5
+script = ExtResource("8_w8i8w")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(2.38419e-07, -16)
+rotation = 1.68323
+shape = SubResource("CapsuleShape2D_c4w8v")
+debug_color = Color(0, 0.639364, 0.36572, 0.42)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="Hurtbox" type="Area2D" parent="." groups=["enemy_hurtbox"]]
+collision_layer = 5
+collision_mask = 3
+script = ExtResource("9_otmr2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -12.5)
 shape = SubResource("CapsuleShape2D_xwavj")
-disabled = true
+debug_color = Color(0.992157, 0, 0.262745, 0.109804)
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("6_xwavj")
@@ -127,3 +132,5 @@ script = ExtResource("9_ipns3")
 enemy_body = NodePath("../../Body")
 enemy_head = NodePath("../../Head")
 metadata/_custom_type_script = "uid://ci0wb0heycmc7"
+
+[connection signal="area_entered" from="Hitbox" to="Hitbox" method="_on_area_entered"]

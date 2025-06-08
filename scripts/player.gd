@@ -20,6 +20,14 @@ var dash_direction := Vector2.ZERO
 var can_jump := true
 var can_dash := true
 
+var health := 100
+var is_invincible := false
+var invincible_time := 1.0
+var invincible_timer := 0.0
+var blink_interval := 0.1
+var blink_timer := 0.0
+
+
 @onready var characterSprite = $AnimatedSprite2D
 @onready var collision_shape = $CollisionShape2D
 @onready var joystick = get_node("/root/world/MobileUI/VirtualJoystick")
@@ -27,6 +35,19 @@ var can_dash := true
 @onready var scepter = get_node("/root/world/Player/Scepter") 
 
 func _process(delta):
+    if is_invincible:
+        invincible_timer -= delta
+        blink_timer -= delta
+        if blink_timer <= 0:
+            characterSprite.visible = !characterSprite.visible
+            blink_timer = blink_interval
+
+        if invincible_timer <= 0:
+            is_invincible = false
+            characterSprite.visible = true
+            _set_flash_white(false)
+
+
     # Smooth follow target offset to the right of player
     if direction != Vector2.ZERO:
         var offset = direction.normalized() * 16  # distance to maintain
@@ -39,6 +60,8 @@ func _process(delta):
         #scepter.global_position = scepter.global_position.lerp(scepter_target, delta * 10.0)
     
     #scepter.rotation = sin(Time.get_ticks_msec() / 200.0) * 0.1
+    
+    
 
 
 
@@ -185,7 +208,61 @@ func set_glow_enabled(enabled: bool):
     var mat = characterSprite.material
     if mat and mat is ShaderMaterial:
         mat.set_shader_parameter("enable_glow", enabled)
+
+func die():
+    global_position = Vector2(400, 400)
+    health = 100
+    #visible = false
+    #set_process(false)
+    #set_physics_process(false)
+    #collision_layer = 0
+    #collision_mask = 0
+    #emit_signal("died")
+    #show_game_over_ui()
+
+
+func apply_damage(amount):
+    
+    if is_invincible:
+        return
+
+    health -= amount
+    print("Player HP:", health)
+    
+    if health <= 0:
+        die()
+    else:
+        $Camera2D.start_shake(3.0, 0.15)
+        start_invincibility()
         
+        do_hit_stop(0.08)
+
+func start_invincibility():
+    $AnimatedSprite2D/SilhouetteSprite.visible = false
+    is_invincible = true
+    invincible_timer = invincible_time
+    blink_timer = 0.0
+    _set_flash_white(true)
+    
+
+func _set_flash_white(enabled: bool):
+    if enabled == false:
+        $AnimatedSprite2D/SilhouetteSprite.visible = true
+        
+    var mat = characterSprite.material
+    if mat and mat is ShaderMaterial:
+        mat.set_shader_parameter("flash_white", enabled)
+
+func do_hit_stop(duration := 0.1):
+    Engine.time_scale = 0.0
+
+    var start = Time.get_ticks_msec()
+    while Time.get_ticks_msec() - start < int(duration * 1000):
+        await get_tree().process_frame  # yield one frame
+
+    Engine.time_scale = 1.0
+
+           
 #func _on_jump_button_pressed():
     #print("JUmpp click btn")
     #if !is_jumping:
